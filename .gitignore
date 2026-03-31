@@ -1,6 +1,10 @@
 node_modules/
+client/node_modules/
 dist/
-# .env # Removed by Orchids to allow .env files
+client/dist/
+
+.env
 *.log
+
 uploads/
 server/data/db.json
