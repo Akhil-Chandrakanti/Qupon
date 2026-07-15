@@ -18,7 +18,12 @@ router.post('/register', async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
     if (!name || !email || !phone || !password) {
-      return res.status(400).json({ message: 'Name, email, phone and password are required' });
+      return res.status(400).json({ message: 'Name, email, phone and password are all required' });
+    }
+
+    const { rows: existing } = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.length) {
+      return res.status(400).json({ message: 'Email already registered' });
     }
 
     const otp = generateOTP();
@@ -41,7 +46,6 @@ router.post('/register', async (req, res) => {
 
     res.json({ message: 'OTP sent to your email', otpSent: true });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
