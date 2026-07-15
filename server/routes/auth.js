@@ -17,14 +17,9 @@ function generateOTP() {
 router.post('/register', async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-    if (!name || !email || !phone || !password)
-      return res.status(400).json({ message: 'All fields required' });
-    if (password.length < 6)
-      return res.status(400).json({ message: 'Password must be at least 6 characters' });
-
-    const { rows: existing } = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (existing.length)
-      return res.status(400).json({ message: 'Email already registered' });
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: 'Name, email, phone and password are required' });
+    }
 
     const otp = generateOTP();
     const expires = Date.now() + 10 * 60 * 1000;
@@ -46,6 +41,7 @@ router.post('/register', async (req, res) => {
 
     res.json({ message: 'OTP sent to your email', otpSent: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
